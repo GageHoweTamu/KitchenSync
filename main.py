@@ -75,8 +75,8 @@ class AppSelector(BoxLayout):
         super(AppSelector, self).__init__(**kwargs)
         self.orientation = 'vertical'
 
-        self.host_button = Button(text='Sync files from this machine to another', on_press=self.run_host_app)
-        self.getter_button = Button(text='Sync files from another machine', on_press=self.run_getter_app)
+        self.host_button = Button(text='Sync files from this machine to another (Host)', on_press=self.run_host_app)
+        self.getter_button = Button(text='Sync files from another machine (Fetch)', on_press=self.run_getter_app)
 
         self.add_widget(self.host_button)
         self.add_widget(self.getter_button)
@@ -86,6 +86,9 @@ class AppSelector(BoxLayout):
 
     def run_getter_app(self, getterInstance):
         MyAppGetter().run()
+
+    def exit_app(self):
+       App.get_running_app().stop() # Add this method
 
 class AppSelectorApp(App):
     def build(self):
@@ -169,7 +172,7 @@ class MyAppGetter(App):
 
 ###################################################################################### Host app
 
-class AppLayoutHost(BoxLayout):
+class AppLayoutHost(BoxLayout):                              # fix this
     def __init__(self, **kwargs):
         super(AppLayoutHost, self).__init__(**kwargs)
 
@@ -186,16 +189,11 @@ class AppLayoutHost(BoxLayout):
 
         directory_layout = BoxLayout(orientation='horizontal') # this client
 
-        self.host_directory = TextInput(hint_text='drag and drop folder/file to send')
+        self.host_directory = TextInput(hint_text='drag and a drop folder/file to show its directory')
 
         left_layout.add_widget(self.host_input)
-        
         left_layout.add_widget(self.username_input)
-        
-        left_layout.add_widget(directory_layout)
         left_layout.add_widget(self.host_directory)
-
-        left_layout.add_widget(self.password_input)
 
         self.console_output = TextInput(readonly=True, multiline=True)
         self.console_output.size_hint = (1, 2)
@@ -205,7 +203,7 @@ class AppLayoutHost(BoxLayout):
         self.add_widget(right_layout)
         
     def _on_file_drop(self, window, file_path):
-        self.directory_input.text = file_path
+        self.host_directory.text = file_path
     
     def printc(self, message):
         current_text = self.console_output.text
@@ -229,6 +227,7 @@ class MyAppHost(App):
         self.root.host_input.text = get_public_ip()
         self.root.username_input.text = get_current_username()
 
-if __name__ == '__main__':
+###################################################################################### Runtime
 
+if __name__ == '__main__':
     AppSelectorApp().run()
