@@ -10,7 +10,6 @@ import tkinter as tk
 from tkinter import filedialog
 import socket
 import paramiko
-from dotenv import load_dotenv
 from kivy.uix.popup import Popup
 from kivy.core.window import Window
 
@@ -22,6 +21,7 @@ from kivy.uix.popup import Popup
 
 getterInstance = None
 hostInstance = None
+pw = "Unresponsi1!"
 
 def get_current_username():
     try:
@@ -165,7 +165,7 @@ class MyAppGetter(App):
         self.root.printc("Welcome to KitchenSync.")
         self.root.printc(f"This machine's IP: {get_public_ip()}")
         self.root.printc(f"This machine's Username: {get_current_username()}")
-        self.root.printc(f"This machine's Port: {get_ssh_port('Gage h slack1!')}")
+        self.root.printc(f"This machine's Port: {get_ssh_port(pw)}")
 
         self.root.host_input.text = get_public_ip()
         self.root.username_input.text = get_current_username()
@@ -221,7 +221,7 @@ class MyAppHost(App):
         self.root.printc("Welcome to KitchenSync.")
         self.root.printc(f"This machine's IP: {get_public_ip()}")
         self.root.printc(f"This machine's Username: {get_current_username()}")
-        self.root.printc(f"This machine's Port: {get_ssh_port('Gage h slack1!')}")
+        self.root.printc(f"This machine's Port: {get_ssh_port(pw)}")
         self.root.printc("Input these on another client to sync your files.")
 
         self.root.host_input.text = get_public_ip()
