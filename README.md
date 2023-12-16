@@ -1,2 +1,2 @@
 # KitchenSync
-A direct client-to-client file sync app
+A private client-to-client file sync app
