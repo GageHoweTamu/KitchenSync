@@ -12,3 +12,5 @@ usually, an SSH connection and file transfer would only be a few lines in a term
 
 
 The lesson here is... don't spend days making an app that what is easily automated with a sh script.
+
+(demonstration video soon)
