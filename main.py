@@ -6,22 +6,15 @@ import paramiko
 import os
 import getpass
 import requests
-import tkinter as tk
-from tkinter import filedialog
 import socket
 import paramiko
 from kivy.uix.popup import Popup
 from kivy.core.window import Window
-
-from tkinter import filedialog
-from tkinter import Tk
-
-from kivy.uix.filechooser import FileChooserIconView
-from kivy.uix.popup import Popup
+from paramiko import SSHClient
 
 getterInstance = None
 hostInstance = None
-pw = "Unresponsi1!"
+pw = "Gage h slack1!"
 
 def get_current_username():
     try:
@@ -68,6 +61,14 @@ def get_ssh_port(password):
 
     return None
 
+def connect_ssh(username):
+    client = SSHClient()
+    client.load_system_host_keys() # if necessary
+    #client.load_host_keys('~/.ssh/known_hosts') # from file, not used
+    client.set_missing_host_key_policy(AutoAddPolicy()) # updates known hosts
+    client.connect('98.44.42.172', username='gage', password='Unresponsi1!')
+    client.close()
+
 ################################################################ App selector
 
 class AppSelector(BoxLayout):
@@ -108,7 +109,7 @@ class AppLayoutGetter(BoxLayout):
         right_layout = BoxLayout(orientation='vertical')
 
         self.host_input = TextInput(hint_text='IP address')
-        self.username_input = TextInput(hint_text='Name')
+        self.username_input = TextInput(hint_text='Username')
         self.password_input = TextInput(hint_text='Password', password=True)
 
         directory_layout = BoxLayout(orientation='horizontal')
@@ -116,8 +117,8 @@ class AppLayoutGetter(BoxLayout):
         directory_layout.add_widget(self.directory_input)
 
         self.dest_host_inputG = TextInput(hint_text='Destination IP address')
-        self.dest_username_inputG = TextInput(hint_text='Destination hehe name')
-        self.dest_password_inputG = TextInput(hint_text='Destination password', password=True)
+        self.dest_username_inputG = TextInput(hint_text='Destination Username')
+        self.dest_password_inputG = TextInput(hint_text='Destination Password', password=True)
 
         self.sync_from_button = Button(text='Sync from Remote')
 
