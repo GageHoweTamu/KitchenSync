@@ -9,4 +9,4 @@ Usually, an SSH connection and file transfer would only be a few lines in a term
 
 The lessons here are...
 * don't spend days making a workaround app that does what is easily automated with a sh script.
-* also, verify that the backend will * *always* * work before making a UI.
+* when making that useless app, verify that the backend will * *always* * work before making a *UI*.
