@@ -14,7 +14,9 @@ from paramiko import SSHClient
 
 getterInstance = None
 hostInstance = None
-pw = "Gage h slack1!"
+pw = None
+
+
 
 def get_current_username():
     try:
@@ -36,6 +38,7 @@ def get_public_ip():
         getterInstance.root.printc(f"Error: {e}")
         return "get_public_ip failed"
 
+'''
 def get_ssh_port(password):
     username = get_current_username()
     
@@ -60,6 +63,7 @@ def get_ssh_port(password):
             ssh.close()
 
     return None
+'''
 
 def connect_ssh(username):
     client = SSHClient()
@@ -113,7 +117,7 @@ class AppLayoutGetter(BoxLayout):
         self.password_input = TextInput(hint_text='Password', password=True)
 
         directory_layout = BoxLayout(orientation='horizontal')
-        self.directory_input = TextInput(hint_text='Directory')
+        self.directory_input = TextInput(hint_text='folder to sync to (you can drag and drop a folder here)')
         directory_layout.add_widget(self.directory_input)
 
         self.dest_host_inputG = TextInput(hint_text='Destination IP address')
@@ -121,7 +125,6 @@ class AppLayoutGetter(BoxLayout):
         self.dest_password_inputG = TextInput(hint_text='Destination Password', password=True)
 
         self.sync_from_button = Button(text='Sync from Remote')
-
         self.sync_from_button.bind(on_press=self.sync_from_remote)
 
         self.host_directory = TextInput(hint_text='Host folder/file')
@@ -150,12 +153,32 @@ class AppLayoutGetter(BoxLayout):
     def _on_file_drop(self, window, file_path):
         self.directory_input.text = file_path
 
-    def sync_from_remote():
-        return 1
-
     def printc(self, message):
         current_text = self.console_output.text
         self.console_output.text = f"{current_text}\n{message}"
+    
+    def sync_from_remote(self, instance):
+        host = self.host_input.text
+        username = self.username_input.text
+        password = self.password_input.text
+        remote_directory = self.directory_input.text
+        local_directory = self.host_directory.text
+
+        try:
+            transport = paramiko.Transport((host, 22))
+            transport.connect(username=username, password=password)
+            sftp = paramiko.SFTPClient.from_transport(transport)
+
+            sftp.get(remote_directory, local_directory)
+
+            self.printc("File synchronization successful.")
+        except Exception as e:
+            self.printc(f"Error during synchronization: {e}")
+        finally:
+            if 'sftp' in locals():
+                sftp.close()
+            if 'transport' in locals():
+                transport.close()
 
 class MyAppGetter(App):
     def build(self):
@@ -166,7 +189,10 @@ class MyAppGetter(App):
         self.root.printc("Welcome to KitchenSync.")
         self.root.printc(f"This machine's IP: {get_public_ip()}")
         self.root.printc(f"This machine's Username: {get_current_username()}")
-        self.root.printc(f"This machine's Port: {get_ssh_port(pw)}")
+        #port = get_ssh_port(pw)
+        #if port == 22:
+        #    self.root.printc(f"This machine's Port: default")
+        #else: self.root.printc(f"This machine's Port: {port}")
 
         self.root.host_input.text = get_public_ip()
         self.root.username_input.text = get_current_username()
@@ -209,9 +235,6 @@ class AppLayoutHost(BoxLayout):                              # fix this
     def printc(self, message):
         current_text = self.console_output.text
         self.console_output.text = f"{current_text}\n{message}"
-    
-    def sync_from_remote():
-        return 1
 
 class MyAppHost(App):
     def build(self):
@@ -222,7 +245,7 @@ class MyAppHost(App):
         self.root.printc("Welcome to KitchenSync.")
         self.root.printc(f"This machine's IP: {get_public_ip()}")
         self.root.printc(f"This machine's Username: {get_current_username()}")
-        self.root.printc(f"This machine's Port: {get_ssh_port(pw)}")
+
         self.root.printc("Input these on another client to sync your files.")
 
         self.root.host_input.text = get_public_ip()
